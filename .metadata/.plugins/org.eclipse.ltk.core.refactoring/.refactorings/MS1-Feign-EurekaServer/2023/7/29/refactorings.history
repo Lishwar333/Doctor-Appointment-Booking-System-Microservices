@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;com.microservice1.DbsConfigServer1Application.java&apos; to &apos;FeignEurekaServerApplication.java&apos;&#x0D;&#x0A;- Original project: &apos;Feign-EurekaServer&apos;&#x0D;&#x0A;- Original element: &apos;com.microservice1.DbsConfigServer1Application.java&apos;&#x0D;&#x0A;- Renamed element: &apos;com.microservice1.FeignEurekaServerApplication.java&apos;" description="Rename compilation unit &apos;DbsConfigServer1Application.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.microservice1{DbsConfigServer1Application.java" name="FeignEurekaServerApplication.java" references="false" stamp="1689972362752" version="1.0"/>
+</session>
