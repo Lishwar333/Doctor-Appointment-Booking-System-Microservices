@@ -144,8 +144,6 @@ Navigate to the project directory and open it in your preferred IDE (e.g., Intel
 
 ### Step 3: Setup Dependencies
 
-Ensure the following are installed:
-
 - **Maven**: Used to build the project.
 
 ### Step 4: Run the Services
