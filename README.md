@@ -102,6 +102,7 @@ CREATE TABLE doctor (
 );
 
 ---
+---
 
 ## Sample API Request
 
