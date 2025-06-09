@@ -146,7 +146,6 @@ Navigate to the project directory and open it in your preferred IDE (e.g., Intel
 
 Ensure the following are installed:
 
-- **MySQL**: Set up a MySQL database and configure it in your `application.properties`.
 - **Maven**: Used to build the project.
 
 ### Step 4: Run the Services
