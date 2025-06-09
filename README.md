@@ -79,6 +79,7 @@ The `appointment` table stores details of appointments made by patients.
 * **doctor\_id**: Foreign key referencing the doctor.
 * **patient\_name**: Name of the patient.
 * **appointment\_time**: Date and time of the appointment.
+<img src="images/Appointment table.png" alt="Project Logo" style="max-width: 200px;">
 
 ### Doctor Table
 
