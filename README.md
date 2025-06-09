@@ -30,7 +30,7 @@ The microservices archetecture of this system is composed of the following:
 
 ## API Endpoints
 
-All endpoints are accessed via the API Gateway (`http://localhost:9100`). The base paths mentioned below are relative to the gateway's routing.
+All endpoints are accessed via the API Gateway (`http://localhost:8762`). The base paths mentioned below are relative to the gateway's routing.
 
 ### Doctor Service Endpoints (routed via API Gateway to `/api/doctors`)
 
