@@ -22,7 +22,7 @@ The system consists of multiple microservices:
 - **Spring Boot**
 - **Spring Cloud** (Eureka, Config Server, API Gateway, Circuit Breaker)
 - **JPA (Java Persistence API)** for database interactions
-- **MySQL** for the relational database
+- **H2** for the relational database
 
 ---
 
