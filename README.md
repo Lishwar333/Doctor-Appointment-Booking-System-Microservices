@@ -1,56 +1,72 @@
 # Doctor Appointment Booking System (Microservices)
 
-This project is a **Doctor Appointment Booking System** built using **Spring Boot** and follows the **Microservices Architecture**. It demonstrates how multiple services can be connected to form a complete system, including managing doctor appointments and handling patient data.
-
----
+This project is a **Doctor Appointment Booking System** built using **Spring Boot** and follows the **Microservices Architecture**. It demonstrates how multiple services can be connected to form a complete system for managing doctor appointments and handling patient data.
 
 ## Project Overview
 
-The system consists of multiple microservices:
+The system is composed of the following microservices:
 
-1. **Doctor Service** – Handles the management of doctors and their details.  
-2. **Appointment Service** – Manages patient appointments with doctors.  
-3. **Config Server** – Centralized configuration server for microservices.  
-4. **Eureka Server** – Service discovery server to allow microservices to discover and communicate with each other.  
-5. **API Gateway** – A single entry point to access all services.  
-6. **Circuit Breaker** – Handles faults in communication between services and provides fallback solutions.
+1.  **Appointment Service**: Manages patient appointments with doctors.
+2.  **Doctor Service**: Handles the management of doctors and their details.
+3.  **Config Server**: Provides centralized configuration for all microservices.
+4.  **Eureka Server**: Acts as a service discovery server, allowing microservices to discover and communicate with each other dynamically.
+5.  **API Gateway**: Serves as a single entry point for all client requests, routing them to the appropriate backend microservice.
+6.  **Circuit Breaker**: Integrated within services (typically via libraries like Resilience4j or Hystrix, if using older Spring Cloud versions) to handle faults in communication between services, preventing cascading failures and providing fallback solutions.
 
----
+### Technologies Used:
 
-## Technologies Used
-
-- **Spring Boot**
-- **Spring Cloud** (Eureka, Config Server, API Gateway, Circuit Breaker)
-- **JPA (Java Persistence API)** for database interactions
-- **H2** for the relational database
-
----
+* **Spring Boot**: For building standalone, production-ready Spring applications.
+* **Spring Cloud**: Provides tools for building common patterns in distributed systems (Eureka, Config Server, Spring Cloud Gateway, Circuit Breaker).
+* **Spring Data JPA**: For simplified data access and persistence with relational databases.
+* **MySQL**: The relational database used for storing application data.
+* **H2 Database (for development/testing)**: An in-memory database used for local development and testing, particularly with `data.sql` for initial data loading.
 
 ## How It Works
 
-### 1. Doctor Service
+* **Doctor Service**: Exposes REST endpoints for managing doctor information (e.g., adding new doctors, updating details, retrieving doctor profiles).
+* **Appointment Service**: Manages the core appointment booking logic. It interacts with its own MySQL database to store appointment details (patient name, doctor ID, and appointment time). It also communicates with the Doctor Service (via Feign Client) to fetch doctor-related information and check availability.
+* **API Gateway**: All client requests first hit the API Gateway. Based on predefined routing rules, the gateway forwards the requests to the correct microservice (e.g., requests to `/api/doctors` go to Doctor Service, `/api/appointments` go to Appointment Service).
+* **Eureka Server**: Each microservice registers itself with the Eureka Server upon startup. When one microservice needs to call another (e.g., Appointment Service calling Doctor Service), it queries Eureka to find the available instances of the target service.
+* **Circuit Breaker**: When a service dependency (like calling the Doctor Service from Appointment Service) experiences failures, the Circuit Breaker can temporarily block calls to the failing service, preventing resource exhaustion and offering a graceful degradation. For instance, if the Doctor Service is unresponsive, a fallback message like "No doctors available now" might be returned.
 
-- Provides endpoints for managing doctor data.
-- Supports adding, updating, and viewing doctor information.
+## API Endpoints
 
-### 2. Appointment Service
+All endpoints are accessed via the API Gateway (e.g., `http://localhost:8080`). The base paths mentioned below are relative to the gateway's routing.
 
-- Handles appointment creation, updating, and viewing for patients.
-- Interacts with a MySQL database to store appointment details including patient name, doctor ID, and appointment time.
+### Doctor Service Endpoints (routed via API Gateway to `/api/doctors`)
 
-### 3. API Gateway
+* **`POST /api/doctors`**: Used for adding a new doctor to the system.
+    * **Purpose**: Register a new doctor who can then be booked for appointments.
+    * **Request Body Example**: (Details depend on your Doctor DTO)
+        ```json
+        {
+          "name": "Dr. Alice Wonderland",
+          "specialization": "Pediatrician",
+          "phoneNumber": "9988776655"
+        }
+        ```
+* **`GET /api/doctors/available`**: Retrieves a list of doctors currently marked as available.
+    * **Purpose**: Allows patients to see which doctors are ready to take appointments.
+    * **Fallback**: If the Doctor Service is down or unresponsive, a default message like **"No doctors available now."** will be returned due to the Circuit Breaker.
+* **`GET /api/doctors/{id}`**: Retrieves detailed information for a specific doctor by their ID.
+    * **Purpose**: Get all details for a particular doctor.
 
-- Acts as a front-facing gateway that routes requests to the appropriate microservice.
-- Simplifies access to the system by abstracting multiple microservices behind a single entry point.
+### Appointment Service Endpoints (routed via API Gateway to `/appointments`)
 
-### 4. Eureka Server
-
-- Used for service discovery.
-- Allows each microservice to register itself and discover other microservices dynamically for communication.
-
-### 5. Circuit Breaker
-
-- Ensures that if one microservice fails, the system continues to operate using fallback methods.
+* **`GET /appointments`**: Retrieves a list of all existing appointments.
+    * **Purpose**: View all scheduled appointments in the system.
+* **`POST /appointments`**: Creates a new appointment.
+    * **Purpose**: Book an appointment for a patient with a specific doctor at a specific time.
+    * **Request Body Example**:
+        ```json
+        {
+          "doctorId": 5,
+          "patientName": "John Doe",
+          "appointmentTime": "2025-06-10T10:30:00"
+        }
+        ```
+* **`GET /appointments/doctor/{doctorId}`**: Checks if a doctor with the given ID is available to take new appointments (e.g., if their schedule allows it, or if the doctor service confirms availability).
+    * **Purpose**: Verify a doctor's immediate availability status for booking.
 
 ---
 
@@ -60,30 +76,18 @@ The system consists of multiple microservices:
 
 The `appointment` table stores details of appointments made by patients.
 
+* **id**: Primary key (auto-generated by the database).
+* **doctor\_id**: Foreign key referencing the doctor.
+* **patient\_name**: Name of the patient.
+* **appointment\_time**: Date and time of the appointment.
+
 ```sql
 CREATE TABLE appointment (
-    id INT PRIMARY KEY,
-    doctor_id INT,
-    patient_name VARCHAR(100),
-    appointment_time DATETIME
+    id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY, -- Use BIGINT for consistency with Long in Java
+    appointment_time DATETIME,
+    doctor_id BIGINT,
+    patient_name VARCHAR(255)
 );
-```
-
-#### Example Data
-
-```sql
-INSERT INTO appointment (id, doctor_id, patient_name, appointment_time)
-VALUES (1, 1, 'Rajesh', '2025-06-10T10:00:00');
-
-INSERT INTO appointment (id, doctor_id, patient_name, appointment_time)
-VALUES (2, 2, 'Meena', '2025-06-11T14:30:00');
-
-INSERT INTO appointment (id, doctor_id, patient_name, appointment_time)
-VALUES (3, 3, 'Vikram', '2025-06-12T09:15:00');
-```
-
----
-
 ### Doctor Table
 
 The `doctor` table stores the details of doctors available in the system.
