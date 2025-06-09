@@ -28,6 +28,8 @@ The microservices archetecture of this system is composed of the following:
 * **Eureka Server**: Each microservice registers itself with the Eureka Server upon startup. When one microservice needs to call another (e.g., Appointment Service calling Doctor Service), it queries Eureka to find the available instances of the target service.
 * **Circuit Breaker**: When a service dependency (like calling the Doctor Service from Appointment Service) experiences failures, the Circuit Breaker can temporarily block calls to the failing service, preventing resource exhaustion and offering a graceful degradation. For instance, if the Doctor Service is unresponsive, a fallback message like "No doctors available now" might be returned.
 
+<img src="images/eureka.png" alt="Project Logo" style="max-width: 200px;">
+
 ## API Endpoints
 
 All endpoints are accessed via the API Gateway (`http://localhost:8762`). The base paths mentioned below are relative to the gateway's routing.
@@ -49,6 +51,7 @@ All endpoints are accessed via the API Gateway (`http://localhost:8762`). The ba
     * **Fallback**: If the Doctor Service is down or unresponsive, a default message like **"No doctors available now."** will be returned due to the Circuit Breaker.
 * **`GET /api/doctors/{id}`**: Retrieves detailed information for a specific doctor by their ID.
     * **Purpose**: Get all details for a particular doctor.
+<img src="images/no doctor.png" alt="Project Logo" style="max-width: 200px;">
 
 ### Appointment Service Endpoints (routed via API Gateway to `/appointments`)
 
@@ -63,10 +66,10 @@ All endpoints are accessed via the API Gateway (`http://localhost:8762`). The ba
           "patientName": "John Doe",
           "appointmentTime": "2025-06-10T10:30:00"
         }
-       c
+       
 * **`GET /appointments/doctor/{doctorId}`**: Checks if a doctor with the given ID is available to take new appointments (e.g., if their schedule allows it, or if the doctor service confirms availability).
     * **Purpose**: Verify a doctor's immediate availability status for booking.
-
+<img src="images/post appointment.png" alt="Project Logo" style="max-width: 200px;">
 ---
 
 ## Database Schema
@@ -89,7 +92,7 @@ The `doctor` table stores the details of doctors available in the system.
 * **name**: Name of the doctor.
 * **specialization**: Doctor's specialization (e.g., Cardiologist, Neurologist).
 * **phone_number**: Doctor's contact phone number.
-
+<img src="images/doctor table.png" alt="Project Logo" style="max-width: 200px;">
 ---
 
 ## Sample API Request
