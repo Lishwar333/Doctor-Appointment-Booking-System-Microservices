@@ -64,7 +64,7 @@ All endpoints are accessed via the API Gateway (e.g., `http://localhost:8080`). 
           "patientName": "John Doe",
           "appointmentTime": "2025-06-10T10:30:00"
         }
-        ```
+       c
 * **`GET /appointments/doctor/{doctorId}`**: Checks if a doctor with the given ID is available to take new appointments (e.g., if their schedule allows it, or if the doctor service confirms availability).
     * **Purpose**: Verify a doctor's immediate availability status for booking.
 
@@ -88,6 +88,8 @@ CREATE TABLE appointment (
     doctor_id BIGINT,
     patient_name VARCHAR(255)
 );
+ ```
+
 ### Doctor Table
 
 The `doctor` table stores the details of doctors available in the system.
