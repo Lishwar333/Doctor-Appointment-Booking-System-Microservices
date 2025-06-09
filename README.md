@@ -100,7 +100,7 @@ CREATE TABLE doctor (
     specialization VARCHAR(100),
     phone_number VARCHAR(15)
 );
-
+```
 ---
 
 ## Sample API Request
