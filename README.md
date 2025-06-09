@@ -49,3 +49,19 @@ CREATE TABLE appointment (
     patient_name VARCHAR(100),
     appointment_time DATETIME
 );
+
+### Example Data
+
+The following SQL queries show sample data insertion into the **appointment** table.
+
+```sql
+-- Inserting data into the appointment table
+INSERT INTO appointment (id, doctor_id, patient_name, appointment_time)
+VALUES (1, 1, 'Rajesh', '2025-06-10T10:00:00');
+
+INSERT INTO appointment (id, doctor_id, patient_name, appointment_time)
+VALUES (2, 2, 'Meena', '2025-06-11T14:30:00');
+
+INSERT INTO appointment (id, doctor_id, patient_name, appointment_time)
+VALUES (3, 3, 'Vikram', '2025-06-12T09:15:00');
+
