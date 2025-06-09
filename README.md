@@ -4,27 +4,26 @@ This project is a **Doctor Appointment Booking System** built using **Spring Boo
 
 ## Project Overview
 
-The system is composed of the following microservices:
+The microservices archetecture of this system is composed of the following:
 
 1.  **Appointment Service**: Manages patient appointments with doctors.
 2.  **Doctor Service**: Handles the management of doctors and their details.
 3.  **Config Server**: Provides centralized configuration for all microservices.
 4.  **Eureka Server**: Acts as a service discovery server, allowing microservices to discover and communicate with each other dynamically.
 5.  **API Gateway**: Serves as a single entry point for all client requests, routing them to the appropriate backend microservice.
-6.  **Circuit Breaker**: Integrated within services (typically via libraries like Resilience4j or Hystrix, if using older Spring Cloud versions) to handle faults in communication between services, preventing cascading failures and providing fallback solutions.
+6.  **Circuit Breaker**: Integrated within services using Hystrix to handle faults in communication between services, preventing cascading failures and providing fallback solutions.
 
 ### Technologies Used:
 
 * **Spring Boot**: For building standalone, production-ready Spring applications.
 * **Spring Cloud**: Provides tools for building common patterns in distributed systems (Eureka, Config Server, Spring Cloud Gateway, Circuit Breaker).
 * **Spring Data JPA**: For simplified data access and persistence with relational databases.
-* **MySQL**: The relational database used for storing application data.
-* **H2 Database (for development/testing)**: An in-memory database used for local development and testing, particularly with `data.sql` for initial data loading.
+* **H2**: The relational database used for storing application data.
 
 ## How It Works
 
 * **Doctor Service**: Exposes REST endpoints for managing doctor information (e.g., adding new doctors, updating details, retrieving doctor profiles).
-* **Appointment Service**: Manages the core appointment booking logic. It interacts with its own MySQL database to store appointment details (patient name, doctor ID, and appointment time). It also communicates with the Doctor Service (via Feign Client) to fetch doctor-related information and check availability.
+* **Appointment Service**: Manages the core appointment booking logic. It interacts with its own database to store appointment details (patient name, doctor ID, and appointment time). It also communicates with the Doctor Service **(via Feign Client)** to fetch doctor-related information and check availability.
 * **API Gateway**: All client requests first hit the API Gateway. Based on predefined routing rules, the gateway forwards the requests to the correct microservice (e.g., requests to `/api/doctors` go to Doctor Service, `/api/appointments` go to Appointment Service).
 * **Eureka Server**: Each microservice registers itself with the Eureka Server upon startup. When one microservice needs to call another (e.g., Appointment Service calling Doctor Service), it queries Eureka to find the available instances of the target service.
 * **Circuit Breaker**: When a service dependency (like calling the Doctor Service from Appointment Service) experiences failures, the Circuit Breaker can temporarily block calls to the failing service, preventing resource exhaustion and offering a graceful degradation. For instance, if the Doctor Service is unresponsive, a fallback message like "No doctors available now" might be returned.
@@ -37,7 +36,7 @@ All endpoints are accessed via the API Gateway (`http://localhost:9100`). The ba
 
 * **`POST /api/doctors`**: Used for adding a new doctor to the system.
     * **Purpose**: Register a new doctor who can then be booked for appointments.
-    * **Request Body Example**: (Details depend on your Doctor DTO)
+    * **Request Body Example**: (Details depend on Doctor DTO)
         ```json
         {
           "name": "Dr. Alice Wonderland",
@@ -101,20 +100,6 @@ CREATE TABLE doctor (
     specialization VARCHAR(100),
     phone_number VARCHAR(15)
 );
-```
-
-#### Example Data
-
-```sql
-INSERT INTO doctor (id, name, specialization, phone_number)
-VALUES (1, 'Dr. Rajesh Kumar', 'Cardiologist', '1234567890');
-
-INSERT INTO doctor (id, name, specialization, phone_number)
-VALUES (2, 'Dr. Meena Gupta', 'Neurologist', '0987654321');
-
-INSERT INTO doctor (id, name, specialization, phone_number)
-VALUES (3, 'Dr. Vikram Sharma', 'Orthopedic', '1122334455');
-```
 
 ---
 
@@ -157,10 +142,10 @@ Navigate to the project directory and open it in your preferred IDE (e.g., Intel
 Start each service in the following order:
 
 1. **Eureka Server**
-2. **Doctor Service**
-3. **Appointment Service**
-4. **API Gateway**
-5. **Circuit Breaker**
+2. **Config Server**
+3. **API Gateway**
+4. **Doctor Service**
+5. **Appointment Service**
 
 ### Step 5: Test the Endpoints
 
